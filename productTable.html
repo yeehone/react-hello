@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Product Table</title>
+	<script type="text/javascript" src="react-demos-master/build/react.js"></script>
+	<script type="text/javascript" src="react-demos-master/build/JSXTransformer.js"></script>
+</head>
+<body>
+<script type="text/jsx">
+	var Data = [
+		{category: "Sporting Goods", price: "$49.99", stocked: true, name: "Football"},
+		{category: "Sporting Goods", price: "$9.99", stocked: true, name: "Baseball"},
+		{category: "Sporting Goods", price: "$29.99", stocked: false, name: "Basketball"},
+		{category: "Electronics", price: "$99.99", stocked: true, name: "iPod Touch"},
+		{category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5"},
+		{category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7"}
+	];
+	var ProductTableList = React.createClass({
+		render: function(){
+			var inStockChecked = this.props.inStockChecked;
+			var inputValue = this.props.inputValue;
+			var tmp = [];
+			this.props.productData.forEach(function(v){
+				if(!(inStockChecked && !v.stocked) && v.name.toLowerCase().indexOf(inputValue.toLowerCase()) > -1){
+					tmp.push(v);
+				}
+			});
+			var createRow = function(){
+				var jsxs = [];
+				var lastCate;
+				tmp.forEach(function(v){
+					if(v.category != lastCate){
+						jsxs.push(
+							<tr>
+								<th colSpan="2">{v.category}</th>
+							</tr>
+						);
+						lastCate = v.category;
+					}
+					jsxs.push(
+						<tr>
+							<td style={{color: (v.stocked ? "" : "red")}}>{v.name}</td>
+							<td>{v.price}</td>
+						</tr>
+					);
+				});
+				return jsxs;
+			}
+			
+			return (
+				<table>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Price</th>
+						</tr>
+					</thead>
+					<tbody>
+						{createRow()}
+					</tbody>
+				</table>
+			);
+		}
+	});
+	var ProductTableFilter = React.createClass({
+		handleChange: function(){
+			var inputValue = React.findDOMNode(this.refs.textInput).value;
+			var inStockChecked = React.findDOMNode(this.refs.inStockCheckBox).checked;
+			this.props.handleChange(inputValue, inStockChecked);
+		},
+		render: function(){
+			return (
+				<div>
+					<input
+						type="text"
+						ref="textInput"
+						value={this.props.inputValue}
+						placeholder="Search..."
+						onChange={this.handleChange}
+					/>
+					<input
+						type="checkbox"
+						ref="inStockCheckBox"
+						checked={this.props.inStockChecked ? "checked" : ""}
+						onChange={this.handleChange}
+					/>
+					<span>Only show products in stock</span>
+				</div>
+			);
+		}
+	});
+	var ProductTable = React.createClass({
+		getInitialState: function() {
+			return {
+				inputValue: "",
+				inStockChecked: false 
+			};
+		},
+		handleChange: function(inputValue, inStockChecked){
+			this.setState({
+				inputValue: inputValue,
+				inStockChecked: inStockChecked 
+			});
+		},
+		render: function() {
+			return (
+				<div>
+					<ProductTableFilter
+						inputValue={this.state.inputValue}
+						inStockChecked={this.state.inStockChecked}
+						handleChange={this.handleChange}
+					/>
+					<ProductTableList
+						productData={this.props.data}
+						inputValue={this.state.inputValue}
+						inStockChecked={this.state.inStockChecked}
+					/>
+				</div>
+			);
+		}
+	});
+	React.render(<ProductTable data={Data}/>, document.body);
+</script>
+</body>
+</html>

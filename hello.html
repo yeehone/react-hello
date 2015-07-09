@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>hello React</title>
+	<script type="text/javascript" src="react-demos-master/build/react.js"></script>
+	<script type="text/javascript" src="react-demos-master/build/JSXTransformer.js"></script>
+</head>
+<body>
+	<div id="hello"></div>
+	<script type="text/jsx">
+		var names = ["React", "Facebook", "Awesome"];
+		/*React.render(
+			<div>
+			{
+				names.map(function(name){
+					return <h1>Hello {name}</h1>
+				})
+			}
+			</div>,
+			document.getElementById("hello")
+		);*/
+		/*React.render(
+			<div>
+			<h1>{names} </h1>
+			</div>,
+			document.getElementById("hello")
+		);*/
+		
+		var HelloComponent = React.createClass({
+			componentWillMount: function() {
+				console.log("componentWillMount", arguments);
+			},
+			componentDidMount: function() {
+				console.log("componentDidMount", arguments);
+			},
+			componentWillUpdate: function(nextProps, nextState) {
+				console.log("componentWillUpdate", arguments);
+			},
+			componentDidUpdate: function(prevProps, prevState) {
+				console.log("componentDidUpdate", arguments);
+			},
+			componentWillUnmount: function() {
+				console.log("componentWillUnmount", arguments);
+			},
+			componentWillReceiveProps: function(nextProps) {
+				console.log("componentWillReceiveProps", arguments);
+			},
+			shouldComponentUpdate: function(nextProps, nextState) {
+				console.log("shouldComponentUpdate", arguments);
+				return true;
+			},
+			getInitialState: function() {
+				return {
+					name: "Yeehone"
+				};
+			},
+			handleClick: function(e){
+				/*for(var a in e){
+					console.log(a, e[a]);
+				}*/
+				debugger;
+				React.findDOMNode(this.refs.h1).innerHTML = e.currentTarget.innerHTML;
+			},
+			handleHeadClick: function(){
+				var name = this.state.name == "Yeehone" ? "YeehoneLiu" : "Yeehone";
+				this.setState({
+					name: name
+				});
+			},
+			render: function() {
+				var that = this;
+				return (
+					<div>
+						<h1 onClick={this.handleHeadClick}>Hello {this.state.name}</h1>
+						<h1 ref="h1" onClick={this.handleHeadClick}>Hello {this.props.name}</h1>
+						<div>
+						{
+							this.props.children.map(function(child){
+								// console.log(that);
+								return <h1 onClick={that.handleClick}>{child}</h1>
+							})
+						}
+						</div>
+					</div>
+				);
+			}
+		});
+
+		React.render(
+			<HelloComponent name="Yeehone">
+				{
+					names.map(function(name){
+						return <div>Hello {name}</div>
+					})
+				}
+			</HelloComponent>,
+			document.getElementById("hello")
+		);
+		//构造props change
+		React.render(
+			<HelloComponent name="Yeehone1">
+				{
+					names.map(function(name){
+						return <div>Hello {name}</div>
+					})
+				}
+			</HelloComponent>,
+			document.getElementById("hello")
+		);
+		// 构造unMount
+		/*React.render(
+			<div>a new div</div>,
+			document.getElementById("hello")
+		);*/
+		
+	</script>
+</body>
+</html>
